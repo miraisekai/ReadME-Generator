@@ -1,8 +1,8 @@
 // TODO: Include packages needed for this application
 const fs = require('fs');
-const path = require('path');
 const inquirer = require('inquirer');
-const generateMarkdown = require
+const generateMarkdown = require('./utils/generateMarkdown');
+const { title } = require('process');
 
 // TODO: Create an array of questions for user input
 const questions = [
@@ -10,11 +10,27 @@ const questions = [
         type: 'input',
         name: 'title',
         message: 'What is the title of your project?',
+        validate: titleInput => {
+          if (titleInput) {
+            return true;
+          } else {
+            console.log('Enter a title');
+            return false;
+          }
+        }
       },
       {
         type: 'input',
         name: 'github',
         message: 'What is your GitHub Username',
+        validate: githubInput => {
+          if (githubInput) {
+            return true;
+          } else {
+            console.log('Enter your Github username');
+            return false;
+          }
+        }
       },
       {
         type: 'input',
@@ -49,15 +65,20 @@ const questions = [
 function writeToFile(fileName, data) {
     return fs.writeFileSync(path.join(process.cwd(),fileName), data);
 }
+function writeReadme(data) {
+  const fileName = 'README.md';
+  writeToFile(fileName, data);
+}
+
 
 // TODO: Create a function to initialize app
 async function init() {
-   const responses = await inquirer.prompt(questions);
-   const data = generateMarkdown({...responses });
+  const responses = await inquirer.prompt(questions);
+  const data = generateMarkdown({...responses });
 
-   console.log('GENERATING README...')
+  console.log('GENERATING README...')
 
-   writeToFile('README.md', data);
+  writeReadme(data);
 }
 
 // Function call to initialize app
